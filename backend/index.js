@@ -1,4 +1,5 @@
 import app from "./app.js";
+import "./database.js"
 
 //Creo la función
 //Que se encarga de ejecutar el servidor
