@@ -2,7 +2,6 @@ import express from "express"
 import productsController from "../controller/productsController.js";
 
 //Router() nos ayuda a colocar los métodos que tendrá el endpoint
-
 const router = express.Router();
 
 //(api/products/)

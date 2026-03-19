@@ -6,7 +6,7 @@ import branchesModel from "../models/branches.js";
 //SELECT
 branchesController.getBranches = async (req, res) =>{
     const branches = await branchesModel.find()
-    res.json(branches)
+    res.json(branches) 
 }
 
 //INSERT
@@ -36,4 +36,4 @@ branchesController.deleteBranch = async(req, res) => {
     res.json({message: "Branch deleted"})
 }
 
-export default branchesController;
+export default branchesController; 

@@ -10,7 +10,7 @@ router.route("/")
 .get(branchesController.getBranches)
 .post(branchesController.createBranch)
 
-//Definimos los métodos para el endpoint que incluye un parámetro dinámico ":id". Este parámetro se utiliza para identificar un recurso específico, como un producto en este caso. Los métodos PUT y DELETE se utilizan para actualizar y eliminar un recurso específico identificado por su ID, respectivamente. 
+//Definimos los method para el endpoint que includes un parámetro dinámico ":id". Este parámetro se utiliza para identificar un recurso específico, como un producto en este caso. Los métodos PUT y DELETE se utilizan para actualizar y eliminar un recurso específico identificado por su ID, respectivamente. 
 //(api/branches/:id)
 router.route("/:id")
 .put(branchesController.updateBranch)
