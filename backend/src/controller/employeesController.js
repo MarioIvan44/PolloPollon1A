@@ -1,6 +1,6 @@
 const employeeController = {}
 
-import employeeModel from "../models/employees.js"
+import employeeModel from "../models/employees.js";
 
 employeeController.getEmployees = async (req, res) => {
     const employees = await employeeModel.find();
@@ -35,7 +35,7 @@ employeeController.updateEmployee = async (req, res) => {
     const {name, lastName, salay, DUI, phone, email, password, idBranch} = req.body;
     await employeeModel.findByIdAndUpdate(req.params.id, {
         name, lastName, salay, DUI, phone, email, password, idBranch
-    }, //new: true, es una opción que se utiliza para indicar que se desea obtener el documento actualizado después de realizar la actualización. Si se establece en true, el método findByIdAndUpdate devolverá el documento actualizado en lugar del documento original antes de la actualización. 
+    }, //new: true, es una opción que se utiliza para indicar qsdue se desea obtener el documento actualizado después de realizar la actualización. Si se establece en true, el método findByIdAndUpdate devolverá el documento actualizado en lugar del documento original antes de la actualización. 
     {new: true})
     res.json({message: "Employee updated"})
 }   
