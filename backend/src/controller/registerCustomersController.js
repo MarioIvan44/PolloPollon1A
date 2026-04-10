@@ -5,7 +5,7 @@
 
 import nodemailer from "nodemailer"
 import crypto from "crypto"
-import jwt, { jsonwebtoken } from "jsonwebtoken"
+import jsonwebtoken from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 
 const registerCustomersController = {}
