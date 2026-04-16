@@ -1,18 +1,17 @@
-//nodemailler: envía correos con SMTP
-//crypto: generar código aleatorio
-//jsonwebtoken: generar token
-//bcryptjs: encriptar contraseña
+import nodemailer from "nodemailer"; //enviar correos
+import crypto from "crypto"; //Generar códigos aleatorios
+import jsonwebtoken from "jsonwebtoken"; //Generar token
+import bcryptjs from "bcryptjs"; //Encriptar contraseña
 
-import nodemailer from "nodemailer";
-import crypto from "crypto";
-import jsonwebtoken from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-
-const registerCustomersController = {};
 import customerModel from "../models/customer.js";
+
 import { config } from "../../config.js";
 
-registerCustomersController.register = async (req, res) => {
+//creo un array de funciones
+const registerCustomerController = {};
+
+registerCustomerController.register = async (req, res) => {
+  //#1- Solicitar los datos a registrar
   const {
     name,
     lastName,
@@ -22,72 +21,72 @@ registerCustomersController.register = async (req, res) => {
     isVerified,
     loginAttempts,
     timeOut,
-  } = req.body; //Pedimos todos los datos que se van a insertar
+  } = req.body;
 
   try {
-    //Verificar si el cliente si ya existe
+    //Verificar si el cliente ya existe
     const existCustomer = await customerModel.findOne({ email });
-    //Si el cliente ya existe, enviamos un mensaje de error
     if (existCustomer) {
       return res.status(400).json({ message: "Customer already exist" });
     }
 
-    //Bcryptjs utiliza un algoritmo de encriptación llamado bcrypt, que es un algoritmo de hashing adaptativo diseñado para ser lento y resistente a ataques de fuerza bruta.
-    //El número 10 es el número de rondas de encriptación, mientras más alto sea el número, más segura será la contraseña, pero también tardará más tiempo en encriptar
-    const passwordHash = await bcrypt.hash(password, 10);
+    //Encriptar la contraseña
+    const passwordHash = await bcryptjs.hash(password, 10);
 
-    //Generar un token de verificación
-    const verificationCode = crypto.randomBytes(3).toString("hex"); //Genera un código aleatorio de 3 bytes y lo convierte a una cadena hexadecimal
+    ////////////////////////////////////////////////////////////////////
+    //Generamos un código aleatorio
+    const verificationCode = crypto.randomBytes(3).toString("hex");
 
-    //Generamos un token para guardar el código aleatorio
+    //Generamos un token para guardar el cógigo aleatorio
     const tokenCode = jsonwebtoken.sign(
-      //1.- ¿Qué vamos a guardar?
+      //#1- ¿Qué vamos a guardar?
       {
         email,
         verificationCode,
         name,
         lastName,
         birthdate,
-        passwordHash, //Guardamos la contraseña encriptada
+        password: passwordHash,
         isVerified,
         loginAttempts,
         timeOut,
       },
-      //2.- Secret key
+      //#2- Secret key
       config.JWT.secret,
-      //3.- ¿Cuándo expira?
+      //#3- ¿Cúando expira?
       { expiresIn: "15m" },
     );
 
-    res.cookie("verificationToken", tokenCode, { maxAge: 15 * 60 * 1000 }); //15 minutos, el token pide en milisegundos
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Guardamos el token en las cookies, con una duración de 15 minutos
+    res.cookie("verificationToken", tokenCode, { maxAge: 15 * 60 * 1000 });
+    /////////////////////////////////////////////////////////////////
 
     //Enviar ese código por correo
-    //1. Quién envía ese código por correo
-    //Transporter es quien manda el correo
+    //#1 Transporter -> ¿Quién envía el correo?
     const transporter = nodemailer.createTransport({
       service: "gmail",
+
       auth: {
         user: config.email.user_email,
         pass: config.email.user_password,
       },
     });
 
-    //2. mailOptions -> quién lo recibe?
+    //#2- mailOptions -> ¿quien lo recibe?
     const mailOptions = {
       from: config.email.user_email,
       to: email,
       subject: "Verificación de cuenta",
       text:
-        "Para verificar tu cuenta, utiliza este código" +
+        "Para verificar tu cuenta, utiliza este código: " +
         verificationCode +
-        " Ten en cuenta que expira en 15 minutos",
+        " expira en 15 minutos",
     };
 
-    //3. Enviar el correo
+    //#3- Enviar el correo
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log("error: " + error);
+        console.log("error " + error);
         return res.status(500).json({ message: "error" });
       }
       res
@@ -95,33 +94,31 @@ registerCustomersController.register = async (req, res) => {
         .json({ message: "Customer registered, verify your email" });
     });
   } catch (error) {
-    console.log("error: " + error);
-    return res
-      .status(500)
-      .json({ message: "Error registering customer: Internal server error" });
+    console.log("error" + error);
+    return res.status(500).json({ message: "internal server error" });
   }
-
- 
 };
 
-//Verificamos el código que le acabamos de enviar
-registerCustomersController.verifyCode = async (req, res) => {
+//VERIFICAR EL CÓDIGO QUE LE ACABAMOS DE ENVIAR
+registerCustomerController.verifyCode = async (req, res) => {
   try {
-    //1. Solicitamos el código que escribieron en el frontend
+    //#1 Solicitamos el código que escribieron en el frontend
     const { verificationCodeRequest } = req.body;
 
-    //2. Obtener el  token de las cookies
+    //#2- Obtener el token de las cookies
     const token = req.cookies.verificationToken;
 
-    //3. Ver que código tiene el token
-    // jsonwebtoken.verify returns the decoded payload 
+    console.log(token);
+
+    //#3- Ver que código está en el token
     const decoded = jsonwebtoken.verify(token, config.JWT.secret);
     const {
       email,
       verificationCode: storedCode,
+      name,
       lastName,
       birthdate,
-      passwordHash,
+      password: passwordHash,
       isVerified,
       loginAttempts,
       timeOut,
@@ -129,32 +126,38 @@ registerCustomersController.verifyCode = async (req, res) => {
 
     //Paso final: comparar el código que el usuario escribe
     //con el código que está en el token
-
     if (verificationCodeRequest !== storedCode) {
-      return res.status(400).json({ message: "invalid code" });
+      return res.status(400).json({ message: "Invalid code" });
     }
 
-    //si el código está bien, entonces, colocamos el campo de "isVerified" en true
+    //Guardamos todo en la base de datos
     const newCustomer = new customerModel({
+      name,
       lastName,
       birthdate,
       email,
-      passwordHash,
+      password: passwordHash,
       isVerified: true,
       loginAttempts,
       timeOut,
     });
 
-    //Guardamos los datos
+    //Guardamos todo en la base de datos
     await newCustomer.save();
 
+    //si el código está bien, entonces, colocamos el campo
+    //"isVerified" en true
+    const customer = await customerModel.findOne({ email });
+    customer.isVerified = true;
+    await customer.save();
+    //
     res.clearCookie("verificationToken");
 
-    res.json({ message: "Email verified succesfully" });
+    res.json({ message: "Email verified successfully" });
   } catch (error) {
     console.log("error" + error);
-    return res.status(500).json({ message: "Internal serer error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export default registerCustomersController;
+export default registerCustomerController;

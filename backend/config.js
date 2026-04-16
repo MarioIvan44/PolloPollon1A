@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 //Exportamos la configuración de la base de datos, que se obtiene de las variables de entorno de .env
+//Se exporta la constante config por nombre para que pueda ser importada en otros archivos utilizando destructuring, como se hace en database.js con la línea: import { config } from "../config.js";
 export const config = {
     db:{
         URI: process.env.DB_URI
