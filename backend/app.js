@@ -8,7 +8,7 @@ import customerRouter from './src/routes/customers.js';
 import registerCustomerRouter from "./src/routes/registerCustomer.js";
 import loginCustomerRouter from "./src/routes/loginCustomer.js";
 import logoutRouter from './src/routes/logout.js';
-
+import recoveryPasswordRouter from './src/routes/recoveryPassword.js';
 //Importante 
 import cookieParser from 'cookie-parser';
 
@@ -30,5 +30,6 @@ app.use("/api/customers", customerRouter)
 app.use("/api/registerCustomers", registerCustomerRouter)
 app.use("/api/loginCustomer", loginCustomerRouter)
 app.use("/api/logout", logoutRouter)
+app.use("/api/recoveryPassword", recoveryPasswordRouter)
 
 export default app;
