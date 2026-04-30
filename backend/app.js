@@ -9,6 +9,7 @@ import registerCustomerRouter from "./src/routes/registerCustomer.js";
 import loginCustomerRouter from "./src/routes/loginCustomer.js";
 import logoutRouter from './src/routes/logout.js';
 import recoveryPasswordRouter from './src/routes/recoveryPassword.js';
+import limiter from './src/middlewares/limiter.js';
 
 import cors from 'cors'; 
 //Importante 
@@ -29,6 +30,8 @@ app.use(cookieParser());
 
 //Acepta JSON 
 app.use(express.json());
+
+app.use(limiter);
 
 //Creamos los endpoints
 app.use("/api/products", productsRouter)
