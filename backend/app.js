@@ -10,6 +10,7 @@ import loginCustomerRouter from "./src/routes/loginCustomer.js";
 import logoutRouter from './src/routes/logout.js';
 import recoveryPasswordRouter from './src/routes/recoveryPassword.js';
 import limiter from './src/middlewares/limiter.js';
+import banners from "./src/routes/banners.js"
 
 import cors from 'cors'; 
 //Importante 
@@ -43,5 +44,5 @@ app.use("/api/registerCustomers", registerCustomerRouter)
 app.use("/api/loginCustomer", loginCustomerRouter)
 app.use("/api/logout", logoutRouter)
 app.use("/api/recoveryPassword", recoveryPasswordRouter)
-
+app.use("/api/banners", banners)
 export default app;
