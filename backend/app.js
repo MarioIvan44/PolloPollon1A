@@ -11,6 +11,7 @@ import logoutRouter from './src/routes/logout.js';
 import recoveryPasswordRouter from './src/routes/recoveryPassword.js';
 import limiter from './src/middlewares/limiter.js';
 import banners from "./src/routes/banners.js"
+import cartRouter from "./src/routes/cart.js"
 
 import cors from 'cors'; 
 //Importante 
@@ -45,4 +46,6 @@ app.use("/api/loginCustomer", loginCustomerRouter)
 app.use("/api/logout", logoutRouter)
 app.use("/api/recoveryPassword", recoveryPasswordRouter)
 app.use("/api/banners", banners)
+app.use("/api/cart", cartRouter)
+
 export default app;
