@@ -14,7 +14,7 @@ router.route("/")
 //Definimos los method para el endpoint que includes un parámetro dinámico ":id". Este parámetro se utiliza para identificar un recurso específico, como un producto en este caso. Los métodos PUT y DELETE se utilizan para actualizar y eliminar un recurso específico identificado por su ID, respectivamente. 
 //(api/branches/:id)
 router.route("/:id")
-.put(branchesController.updateBranch)
-.delete(branchesController.deleteBranch)
+.put(validateAuthCookie(["admin"]), branchesController.updateBranch)
+.delete(validateAuthCookie(["admin"]), branchesController.deleteBranch)
 
 export default router;
