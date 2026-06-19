@@ -15,6 +15,8 @@ import cartRouter from "./src/routes/cart.js"
 import deliveryDriversRoutes from './src/routes/deliveryDrivers.js';
 import wompiRoutes from "./src/routes/wompi.js"
 import { validateAuthCookie } from './src/middlewares/authMiddleware.js';
+import loginAdminRoutes from './src/routes/loginAdmin.js';
+import registerAdminRoutes from './src/routes/registerAdmin.js';
 
 import cors from 'cors'; 
 //Importante 
@@ -52,5 +54,7 @@ app.use("/api/banners", banners)
 app.use("/api/cart", cartRouter)
 app.use("/api/wompi", wompiRoutes)
 app.use("/api/deliveryDrivers", deliveryDriversRoutes)
+app.use("/api/registerAdmin", registerAdminRoutes)
+app.use("/api/loginAdmin", loginAdminRoutes)
 
 export default app;
