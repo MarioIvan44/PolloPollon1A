@@ -17,6 +17,7 @@ import wompiRoutes from "./src/routes/wompi.js"
 import { validateAuthCookie } from './src/middlewares/authMiddleware.js';
 import loginAdminRoutes from './src/routes/loginAdmin.js';
 import registerAdminRoutes from './src/routes/registerAdmin.js';
+import eventsRouter from './src/routes/events.js';
 
 import cors from 'cors'; 
 //Importante 
@@ -56,5 +57,6 @@ app.use("/api/wompi", wompiRoutes)
 app.use("/api/deliveryDrivers", deliveryDriversRoutes)
 app.use("/api/registerAdmin", registerAdminRoutes)
 app.use("/api/loginAdmin", loginAdminRoutes)
+app.use("/api/events", eventsRouter)
 
 export default app;
