@@ -1,24 +1,27 @@
-import express from "express"
+import express from "express";
 import employeesController from "../controller/employeesController.js";
+// Importamos el middleware de autenticación
+import { validateAuthCookie } from "../middlewares/authMiddleware.js";
 
-//Router() nos ayuda a colocar los métodos que tendrá el endpoint
 const router = express.Router();
 
-//(api/employees/)
+// (api/employees/)
 router.route("/")
-.get(employeesController.getEmployees)
-.post(employeesController.createEmployee)
+  // Permitimos que admin y customer vean los empleados (puedes quitar "customer" si es información privada)
+  .get(validateAuthCookie(["admin", "customer"]), employeesController.getEmployees)
+  // Solo admin puede crear empleados
+  .post(validateAuthCookie(["admin"]), employeesController.createEmployee);
 
-//Definimos los métodos para el endpoint que incluye un parámetro dinámico ":id". Este parámetro se utiliza para identificar un recurso específico, como un producto en este caso. Los métodos PUT y DELETE se utilizan para actualizar y eliminar un recurso específico identificado por su ID, respectivamente. 
-//(api/branches/:id)
+// (api/employees/:id)
 router.route("/:id")
-.put(employeesController.updateEmployee)
-.delete(employeesController.deleteEmployee) 
+  // Solo admin puede actualizar o eliminar empleados por su ID
+  .put(validateAuthCookie(["admin"]), employeesController.updateEmployee)
+  .delete(validateAuthCookie(["admin"]), employeesController.deleteEmployee);
 
-export default router; 
+export default router;
 
 /**
- * Obtener empleado por nombre
- * router.route("/:name")
- *  .get(employeesController.getEmployeeByName)
+ * Obtener empleado por nombre (Si decides activarlo en el futuro, recuerda protegerlo)
+ * router.route("/name/:name")
+ * .get(validateAuthCookie(["admin", "customer"]), employeesController.getEmployeeByName)
  */
