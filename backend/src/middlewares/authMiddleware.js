@@ -8,6 +8,7 @@ export const validateAuthCookie = (allowedTypes = []) => {
             //due to in the cookie is the type of user that logged in
             const {authCookie} = req.cookies;
 
+            //If the cookie is not found, send an error message
             if(!authCookie){
                 return res.status(404).json({message: "No cookie found, Authorization required"})
             }
@@ -15,6 +16,7 @@ export const validateAuthCookie = (allowedTypes = []) => {
             //Extract all the cookie information
             const decoded = jwt.verify(authCookie, config.JWT.secret);
 
+            //If the allowed types doesnt include the userType of the token, show an error message
             if(!allowedTypes.includes(decoded.userType)){
                 return res.status(401).json({message: "Access denied"})
             }
